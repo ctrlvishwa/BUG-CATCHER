@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐛 Bug Catcher AI | TECH_LORO</title>
+    <style>
+        /* Custom Fonts & Animations */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Fira+Code:wght@400;600&display=swap');
+
+        :root {
+            --bg: #eceff1;
+            --card: #ffffff;
+            --text: #0f172a;
+            --accent-1: #ff3b30; /* Electric Red */
+            --accent-2: #6366f1; /* Indigo */
+            --border: 3px solid #0f172a;
+            --shadow: 6px 6px 0px #0f172a; 
+        }
+
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background-color: var(--bg); 
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px; 
+            color: var(--text); 
+            margin: 0; 
+            padding: 2rem 1rem; 
+            display: flex; 
+            justify-content: center; 
+        }
+
+        .container { width: 100%; max-width: 850px; }
+
+        /* Animated Gradient Header */
+        header { text-align: center; margin-bottom: 3rem; animation: float 3s ease-in-out infinite; }
+        header h1 { 
+            font-size: 3rem; 
+            font-weight: 700;
+            margin: 0; 
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2), #f59e0b);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradientShift 4s linear infinite;
+        }
+        header p { font-size: 1.2rem; font-weight: 500; margin-top: 0.5rem; }
+
+        /* Main Panel styling */
+        .panel { 
+            background-color: var(--card); 
+            border: var(--border); 
+            border-radius: 12px; 
+            padding: 1.5rem; 
+            margin-bottom: 2rem; 
+            box-shadow: var(--shadow); 
+            transition: transform 0.2s;
+        }
+        .panel:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #0f172a; }
+
+        .panel-title { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            margin-top: 0; 
+            margin-bottom: 1rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+        }
+
+        /* Code Editor Textarea */
+        textarea { 
+            width: 100%; 
+            height: 320px; 
+            padding: 1rem; 
+            background-color: #0f172a; 
+            border: var(--border); 
+            color: #10b981; 
+            border-radius: 8px; 
+            font-family: 'Fira Code', monospace; 
+            font-size: 1rem; 
+            line-height: 1.6; 
+            box-sizing: border-box; 
+            resize: vertical; 
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        textarea:focus { outline: none; border-color: var(--accent-2); }
+
+        /* Bold Animated Button */
+        .btn-container { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+        button { 
+            background-color: var(--accent-2); 
+            color: white; 
+            border: var(--border); 
+            padding: 1rem 2.5rem; 
+            font-size: 1.1rem; 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            box-shadow: 4px 4px 0px #0f172a;
+            transition: all 0.1s; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        button:hover { 
+            transform: translate(2px, 2px); 
+            box-shadow: 2px 2px 0px #0f172a; 
+            background-color: #4f46e5;
+        }
+        button:active {
+            transform: translate(4px, 4px); 
+            box-shadow: 0px 0px 0px #0f172a; 
+        }
+        button:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+
+        /* Output Box with Typewriter Vibe */
+        #output { 
+            display: none; 
+            margin-top: 2rem; 
+            background-color: #ffffff; 
+            border: var(--border); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            white-space: pre-wrap; 
+            font-family: 'Fira Code', monospace; 
+            line-height: 1.6;
+            box-shadow: var(--shadow);
+            border-left: 8px solid var(--accent-1);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .error { display: none; background-color: #fca5a5; border: var(--border); color: #991b1b; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: bold; }
+
+        /* Contact Dashboard Footer */
+        .contact-dashboard {
+            margin-top: 3rem;
+            background-color: var(--card);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 4px 4px 0px var(--accent-2); /* Indigo shadow for contrast */
+        }
+        
+        .contact-dashboard h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            border-bottom: 3px dashed #cbd5e1;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contact-dashboard h3 span {
+            color: var(--accent-2);
+            font-size: 1rem;
+            background: #e0e7ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 2px solid var(--accent-2);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .contact-icon {
+            font-size: 1.4rem;
+            background-color: #f1f5f9;
+            padding: 0.4rem;
+            border-radius: 8px;
+            border: 2px solid var(--text);
+        }
+
+        /* CSS Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐛 AI Bug Catcher ⚡</h1>
+            <p>Paste your code below. Let the AI hunt down vulnerabilities and logic flaws.</p>
+        </header>
+
+        <div id="errorMessage" class="error">🚨 <span id="errText"></span></div>
+
+        <div class="panel">
+            <h2 class="panel-title">👨‍💻 Code Workspace </h2>
+            <textarea id="codeInput" placeholder="// Paste your JavaScript, Python, C++, Flutter etc. here... &#10;&#10;function calculateTax() { &#10;   // bug is hiding here &#10;}"></textarea>
+            
+            <div class="btn-container">
+                <button id="analyzeBtn">
+                    <span id="btnText">Hunt Bugs 🎯</span>
+                    <div class="spinner" id="btnSpinner"></div>
+                </button>
+            </div>
+        </div>
+
+        <div id="output"></div>
+
+        <!-- NEW: Professional Contact Dashboard -->
+        <div class="contact-dashboard">
+            <h3>Designed & Developed by Nikhil Kumar Giri <span>TECH_LORO</span></h3>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <a href="mailto:whyvishwa1967@gmail.com" style="color: var(--text); text-decoration: none;">whyvishwa1967@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <span>+91 9259470921</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">💬</span>
+                    <span>WhatsApp: +91 9259470921</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🚀</span>
+                    <span>TECH_LORO Innovations</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const btn = document.getElementById('analyzeBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const output = document.getElementById('output');
+        const errorDiv = document.getElementById('errorMessage');
+        const errText = document.getElementById('errText');
+
+        btn.addEventListener('click', async () => {
+            const inputCode = document.getElementById('codeInput').value.trim();
+            errorDiv.style.display = "none";
+            output.style.display = "none";
+
+            if (!inputCode) return showError("MISSING PARAMETERS: INPUT STREAM EMPTY.");
+
+            btnText.textContent = "PROCESSING...";
+            btnSpinner.style.display = "block";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: inputCode })
+                });
+
+                const analysisResult = await response.json();
+
+                // 🛡️ SECURITY PATCH: Strict API Response Validation
+                // We ensure the response is a valid object and hasn't been hijacked
+                if (typeof analysisResult !== 'object' || analysisResult === null) {
+                    throw new Error("SECURITY FAULT: Invalid payload format received.");
+                }
+                
+                if (!response.ok) {
+                    throw new Error(analysisResult.error || "SERVER_DISCONNECT");
+                }
+
+                // 🛡️ SECURITY PATCH: Verify the result is strictly a string before rendering
+                if (typeof analysisResult.result !== 'string') {
+                    throw new Error("SECURITY FAULT: Unexpected data type in data stream.");
+                }
+
+                output.style.display = "block";
+                
+                // Using textContent automatically sanitizes inputs and prevents XSS attacks
+                output.textContent = "> SCAN COMPLETE. RETRIEVING LOGS...\n\n" + analysisResult.result;
+
+            } catch (err) {
+                showError(`EXCEPTION: ${err.message}`);
+            } finally {
+                btnText.textContent = "EXECUTE SCAN";
+                btnSpinner.style.display = "none";
+                btn.disabled = false;
+            }
+        });
+
+        function showError(message) {
+            errText.textContent = message;
+            errorDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
